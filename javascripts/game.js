@@ -6826,4 +6826,4 @@ document.getElementById("Limit Break").setAttribute('ach-tooltip', "Break Infini
 		player.tickspeedBoosts++;
 	}
 	document.getElementById("postcngm4r_2div").style.display=player.challenges.includes("postcngm3_3")?"":"none";
-}, 100))
+}//, 100))
