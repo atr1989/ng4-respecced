@@ -3499,6 +3499,12 @@ document.getElementById("bigcrunch").onclick = function () {
 
         checkForEndMe()
 
+        try {
+            kongregate.stats.submit('Infinitied', getInfinitied());
+            kongregate.stats.submit('Fastest Infinity time (ms)', Math.floor(player.bestInfinityTime * 100))
+
+        } catch (err) {console.log("Couldn't load Kongregate API")}
+
         if (player.infinitied >= 10) giveAchievement("That's a lot of infinites");
         if (player.infinitied >= 1 && !player.challenges.includes("challenge1")) player.challenges.push("challenge1");
 
@@ -3950,7 +3956,9 @@ function eternity(force, auto) {
             document.getElementById("replicantidiv").style.display="inline-block"
             document.getElementById("replicantiunlock").style.display="none"
         }
-
+        try {
+            kongregate.stats.submit('Eternities', player.eternities);
+        } catch (err) {console.log("Couldn't load Kongregate API")}
         if (player.eternities > 2 && player.replicanti.galaxybuyer === undefined) player.replicanti.galaxybuyer = false
         document.getElementById("infinityPoints1").innerHTML = "You have <span class=\"IPAmount1\">"+shortenDimensions(player.infinityPoints)+"</span> Infinity points."
         document.getElementById("infinityPoints2").innerHTML = "You have <span class=\"IPAmount2\">"+shortenDimensions(player.infinityPoints)+"</span> Infinity points."
@@ -4220,6 +4228,10 @@ function startChallenge(name, target) {
     if (player.achievements.includes("r55")) player.money = new Decimal(1e10);
     if (player.achievements.includes("r78")) player.money = new Decimal(1e25);
     showTab("dimensions")
+    try {
+        kongregate.stats.submit('Infinitied', getInfinitied());
+        kongregate.stats.submit('Fastest Infinity time', Math.floor(player.bestInfinityTime / 10))
+    } catch (err) {console.log("Couldn't load Kongregate API")}
 
     if (player.infinitied >= 10) giveAchievement("That's a lot of infinites");
 
@@ -4811,6 +4823,9 @@ function startEternityChallenge(name, startgoal, goalIncrease) {
             document.getElementById("replicantidiv").style.display="none"
             document.getElementById("replicantiunlock").style.display="inline-block"
         }
+        try {
+            kongregate.stats.submit('Eternities', player.eternities);
+        } catch (err) {console.log("Couldn't load Kongregate API")}
         if (player.eternities > 2 && player.replicanti.galaxybuyer === undefined) player.replicanti.galaxybuyer = false
         document.getElementById("infinityPoints1").innerHTML = "You have <span class=\"IPAmount1\">"+shortenDimensions(player.infinityPoints)+"</span> Infinity points."
         document.getElementById("infinityPoints2").innerHTML = "You have <span class=\"IPAmount2\">"+shortenDimensions(player.infinityPoints)+"</span> Infinity points."
@@ -6607,6 +6622,28 @@ function init() {
     updateTickSpeed();
     updateAutobuyers();
     updateChallengeTimes()
+    try {
+        kongregateAPI.loadAPI(function () {
+            window.kongregate = kongregateAPI.getAPI();
+        });
+        updateKongPurchases()
+    } catch (err) {console.log("Couldn't load Kongregate API")}
+
+    //if (typeof kongregate === 'undefined') document.getElementById("shopbtn").style.display = "none"
+
+}
+
+
+
+
+
+
+
+
+
+//Playfab stuff
+
+
 
 function closeToolTip() {
     var elements = document.getElementsByClassName("popup")
@@ -6644,6 +6681,12 @@ window.onload = function() {
     setTimeout(function() {
         playFabLogin();
         updateKongPurchases()
+        try {
+            if (kongregate.services.getGameAuthToken() === undefined) document.getElementById("shopbtn").style.display = "none"
+        } catch(e) {
+            console.log(e)
+            document.getElementById("shopbtn").style.display = "none"
+        }
         document.getElementById("container").style.display = "block"
         document.getElementById("loading").style.display = "none"
     }, 1000)
@@ -6826,4 +6869,4 @@ document.getElementById("Limit Break").setAttribute('ach-tooltip', "Break Infini
 		player.tickspeedBoosts++;
 	}
 	document.getElementById("postcngm4r_2div").style.display=player.challenges.includes("postcngm3_3")?"":"none";
-}//, 100))
+}, 100)
